@@ -1,5 +1,8 @@
 #ifndef LOADER_H
-#define LOADER_H
+  #define LOADER_H
+
+#define PACAKGE1
+#define PACAKGE_VERSION1
 
 #include <stdint.h>
 #include <string>
