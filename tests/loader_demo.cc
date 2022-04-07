@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <string>
 #include <yaml-cpp/yaml.h>
-#include "../lib/loader.h"
+#include "../lib/loader.hpp"
 #include <iostream>
 
 /**
