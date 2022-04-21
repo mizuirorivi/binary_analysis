@@ -8,6 +8,7 @@ void* (*orig_malloc)(size_t);
 void  (*orig_free)(void*);
 char* (*orig_strcpy)(char*, const char*);
 
+
 typedef struct {
   uintptr_t addr;
   size_t    size;
@@ -18,9 +19,11 @@ typedef struct {
 alloc_t allocs[MAX_ALLOCS];
 unsigned alloc_idx = 0;
 
+
 void*
 malloc(size_t s)
 {
+  // 元のlibcのmallocを取得
   if(!orig_malloc) orig_malloc = dlsym(RTLD_NEXT, "malloc");
 
   void *ptr = orig_malloc(s);
@@ -36,10 +39,12 @@ malloc(size_t s)
 void
 free(void *p)
 {
+  unsigned i = 0;
+  // 元のlibcのfreeを取得
   if(!orig_free) orig_free = dlsym(RTLD_NEXT, "free");
 
   orig_free(p);
-  for(unsigned i = 0; i < MAX_ALLOCS; i++) {
+  for(i = 0; i < MAX_ALLOCS; i++) {
     if(allocs[i].addr == (uintptr_t)p) {
       allocs[i].addr = 0;
       allocs[i].size = 0;
@@ -52,8 +57,8 @@ char*
 strcpy(char *dst, const char *src)
 {
   if(!orig_strcpy) orig_strcpy = dlsym(RTLD_NEXT, "strcpy");
-
-  for(unsigned i = 0; i < MAX_ALLOCS; i++) {
+  unsigned i = 0;
+  for(i = 0; i < MAX_ALLOCS; i++) {
     if(allocs[i].addr == (uintptr_t)dst) {
       if(allocs[i].size <= strlen(src)) {
         printf("Bad idea! Aborting strcpy to prevent heap overflow\n");
